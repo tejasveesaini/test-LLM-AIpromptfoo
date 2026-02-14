@@ -1,0 +1,23 @@
+{
+  "name": "test-llm-aipromptfoo",
+  "version": "1.0.0",
+  "description": "A **project** demonstrating how to test and evaluate LLM responses using **Promptfoo**. It shows testing of non-deterministic behavior of a banking assistant chatbot against multiple quality criteria including safety, functionality, and semantic correctness.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tejasveesaini/test-LLM-AIpromptfoo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tejasveesaini/test-LLM-AIpromptfoo/issues"
+  },
+  "homepage": "https://github.com/tejasveesaini/test-LLM-AIpromptfoo#readme",
+  "dependencies": {
+    "promptfoo": "^0.120.19"
+  }
+}
