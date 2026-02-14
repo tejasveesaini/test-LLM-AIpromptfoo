@@ -1,0 +1,79 @@
+description: "Banking Assistant - Gemini Judge Suite"
+
+# ============================================================================
+# 1. INPUT CONFIGURATION
+# ============================================================================
+# Define the input variables that will be substituted into prompts
+# In this case, "query" will be replaced with values from the test cases
+prompts: [ "{{query}}" ]
+
+# ============================================================================
+# 2. SYSTEM UNDER TEST
+# ============================================================================
+# Specifies the provider(s) that will be tested
+# Using a custom Python script to mock the LLM behavior
+providers:
+  - id: python:provider.py
+
+# ============================================================================
+# 3. TEST DATA SOURCE
+# ============================================================================
+# Points to the CSV file containing all test cases
+tests: file://test_cases.csv
+
+# ============================================================================
+# 4. DEFAULT TEST CONFIGURATION
+# ============================================================================
+# Global settings applied to all tests
+defaultTest:
+  options:
+    # Provider configuration for generating responses
+    # Using Google's Gemini 1.5 Flash model with API key from environment
+    provider: 
+      id: google:gemini-1.5-flash
+      config:
+        apiKey: "{{GOOGLE_API_KEY}}" # Pulled from environment variable
+    
+    # ====================================================================
+    # ASSERTION RULES
+    # ====================================================================
+    assert:
+      # ---- PERFORMANCE ASSERTIONS ----
+      # Non-functional tests that measure speed/efficiency
+      - type: latency
+        threshold: 2000  # Response must complete within 2 seconds
+
+      # ---- STRUCTURAL ASSERTIONS ----
+      # Local CPU-based checks that verify output format/structure
+      # No external API calls needed for these checks
+      - type: is-json
+        if: vars.test_type == 'json_schema'  # Only run if test type is JSON schema
+      
+      - type: contains
+        value: "{{expected_value}}"  # Check that response contains expected value
+        if: vars.test_type == 'json_schema'
+
+      # ---- SEMANTIC ASSERTIONS ----
+      # Use Gemini as a judge to evaluate semantic correctness
+      # More intelligent than simple embedding-based similarity
+      - type: similar
+        value: "{{expected_value}}"  # Compare against expected meaning
+        threshold: 0.6  # Require 60%+ similarity score
+        provider: google:gemini-1.5-flash  # Use Gemini as the judge/evaluator
+        if: vars.test_type == 'similarity'
+
+      # ---- SAFETY/REFUSAL ASSERTIONS ----
+      # Use Gemini to intelligently detect if LLM refused the request
+      # More reliable than regex pattern matching
+      - type: is-refusal
+        provider: 
+          id: google:gemini-1.5-flash
+          config:
+            apiKey: "{{GOOGLE_API_KEY}}"
+        if: vars.test_type == 'refusal'  # Only run for refusal test cases
+
+# ============================================================================
+# 5. PASS/FAIL CRITERIA
+# ============================================================================
+# Overall test suite requirements
+minScore: 0.85  # Test suite passes only if 85% or more assertions pass

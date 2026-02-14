@@ -1,0 +1,54 @@
+name: AI Quality Gate
+
+on: [push, pull_request]
+
+jobs:
+  evaluate-ai:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. SETUP PYTHON (Required for local embeddings)
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip' # Cache pip packages to speed up runs
+
+      # 2. SETUP NODE (Required for promptfoo CLI)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. CACHE HUGGINGFACE MODELS
+      # This saves the ~500MB embedding model so it doesn't download every time
+      - name: Cache AI Models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: ${{ runner.os }}-huggingface-v1
+
+      # 4. INSTALL DEPENDENCIES
+      - name: Install Tools
+        run: |
+          npm install -g promptfoo
+          pip install sentence-transformers
+
+      # 5. RUN EVALUATION
+      - name: Run Promptfoo Evaluation
+        run: npx promptfoo eval --config promptfooconfig.yaml --verbose  --output results.json
+        timeout-minutes: 30
+
+      - name: Generate Report
+        run: npx promptfoo report --output results.json --html report.html
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: promptfoo-results
+          path: |
+            results.json
+            report.html
