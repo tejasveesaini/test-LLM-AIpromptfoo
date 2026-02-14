@@ -1,6 +1,6 @@
 # Evaluate LLM responses
 
-A **project** demonstrating how to test and evaluate LLM responses using **Promptfoo**. This is an educational example of testing a banking assistant chatbot against multiple quality criteria including safety, functionality, and semantic correctness.
+A **project** demonstrating how to test and evaluate LLM responses using **Promptfoo**. It shows testing of non-deterministic behavior of a banking assistant chatbot against multiple quality criteria including safety, functionality, and semantic correctness.
 
 ## 📋 Table of Contents
 
