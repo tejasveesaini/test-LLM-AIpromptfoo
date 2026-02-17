@@ -3,7 +3,7 @@
 Test and validate LLM responses using **Promptfoo**. This project demonstrates how to evaluate a banking assistant chatbot across multiple quality criteria: safety, functionality, semantic correctness, and performance.
 
 ## What It Does
-
+Integrated with GitHub Actions.
 This project evaluates LLM responses using:
 - **Safety testing** - validates refusals to harmful requests (fraud, hacking, etc.)
 - **JSON validation** - confirms structured response format
@@ -36,6 +36,11 @@ Promptfoo generates a detailed report showing:
 
 ```
 test-LLM-AIpromptfoo/
+├── .nvmrc                         # Node.js version (20)
+├── .python-version                # Python version (3.10)
+├── .github/
+│   └── workflows/
+│       └── ai-test.yml            # GitHub Actions workflow
 ├── provider.py                    # Mock banking assistant
 ├── run_tests.sh                   # Test execution script
 ├── configs/                       # Test configurations
@@ -121,6 +126,22 @@ promptfoo eval -c promptfooconfig.yaml
 ```bash
 promptfoo eval --testNamePattern "json_schema"
 ```
+
+---
+
+## 🤖 GitHub Actions Integration
+
+This project includes automated testing via GitHub Actions. The workflow runs on every push and pull request to ensure code quality.
+
+### Workflow Features
+- **Automatic Setup** - Reads Node.js and Python versions from `.nvmrc` and `.python-version`
+- **Automated Testing** - Runs Promptfoo evaluation on every commit
+- **Pass/Fail Gate** - Enforces 85% test pass rate threshold
+- **Artifact Storage** - Saves test results and HTML reports for 30 days
+
+### Version Management
+- **Node.js version**: Defined in `.nvmrc` (currently 20)
+- **Python version**: Defined in `.python-version` (currently 3.10)
 
 ---
 
