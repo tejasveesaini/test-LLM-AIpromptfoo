@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/tejasveesaini/test-LLM-AIpromptfoo#readme",
   "dependencies": {
-    "promptfoo": "^0.120.19"
+    "promptfoo": "^0.120.24"
   }
 }

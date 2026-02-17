@@ -1,0 +1,26 @@
+description: "Banking Assistant - Judge Suite"
+
+# Use the 'prompt' column from your CSVs
+prompts: ["{{prompt}}"]
+
+providers:
+  - id: python:../provider.py
+
+evaluateOptions:
+  cache: false
+  maxConcurrency: 1
+  delay: 1000
+
+tests:
+  - file://../testCases/testCases_LLMsimilarity.csv
+
+defaultTest:
+  assert:
+    - type: latency
+      threshold: 2000
+
+    - type: llm-rubric
+      value: |
+        The response should be semantically similar to: {{expected_value}}
+        Grade on a scale of 0-1 based on semantic similarity.
+      provider: google:gemini-2.5-flash

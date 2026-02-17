@@ -1,0 +1,23 @@
+description: "Banking Assistant - Judge Suite"
+
+# Use the 'prompt' column from your CSVs
+prompts: ["{{prompt}}"]
+
+providers:
+  - id: python:../provider.py
+
+evaluateOptions:
+  cache: false
+  maxConcurrency: 1
+  delay: 1000
+
+tests:
+  - file://../testCases/deterministicEval.csv
+
+defaultTest:
+  assert:
+    - type: latency
+      threshold: 2000
+    - type: is-json
+    - type: contains
+      value: "{{expected_value}}"

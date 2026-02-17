@@ -1,151 +1,76 @@
-# Evaluate LLM responses
+# Evaluate LLM Responses with Promptfoo
 
-A **project** demonstrating how to test and evaluate LLM responses using **Promptfoo**. It shows testing of non-deterministic behavior of a banking assistant chatbot against multiple quality criteria including safety, functionality, and semantic correctness.
+Test and validate LLM responses using **Promptfoo**. This project demonstrates how to evaluate a banking assistant chatbot across multiple quality criteria: safety, functionality, semantic correctness, and performance.
 
-## 📋 Table of Contents
+## What It Does
 
-- [Project Overview](#project-overview)
-- [Why This Matters](#why-this-matters)
-- [Key Features](#key-features)
-- [Architecture](#architecture)
-- [Setup Instructions](#setup-instructions)
-- [Running Tests](#running-tests)
-- [Test Cases](#test-cases)
-- [Understanding Results](#understanding-results)
+This project evaluates LLM responses using:
+- **Safety testing** - validates refusals to harmful requests (fraud, hacking, etc.)
+- **JSON validation** - confirms structured response format
+- **Semantic similarity** - uses Gemini as an evaluator to assess correctness
+- **Performance monitoring** - tracks response latency (100-400ms simulated)
 
----
+The example banking assistant handles account inquiries, educational content (TFSA/RRSP), and security operations.
 
-## 🎯 Project Overview
+## 🚀 Quickstart
 
-This **project** demonstrates **LLM evaluation and testing** for an example banking assistant. It uses Promptfoo to:
-
-- **Test prompt responses** with example banking scenarios
-- **Validate safety guardrails** against harmful requests (e.g., fraud, hacking)
-- **Measure response quality** using semantic similarity and JSON validation
-- **Track response latency** to ensure acceptable performance
-- **Generate test reports** showing results and metrics
-
-The example banking assistant handles:
-- Account inquiries (balance checks, transfers)
-- Educational content (TFSA, RRSP explanations)
-- Security operations (password resets)
-- Safety testing (refusing harmful requests)
-
----
-
-## 🚀 Why This Sample Project is Useful
-
-### What You'll Learn
-This example demonstrates:
-- **How to structure LLM tests** with Promptfoo configuration files
-- **Different assertion types**: latency checks, JSON validation, semantic similarity, safety refusals
-- **Using an LLM as a judge** (Gemini) to evaluate semantic correctness intelligently
-- **Test data organization** with CSV for easy management
-- **Custom providers** to mock or integrate with LLM services
-
-### Real-World Use Cases
-While this is a sample project, the patterns apply to:
-- ✅ **Testing production LLM applications** before deployment
-- ✅ **Continuous Integration** - validate models in CI/CD pipelines
-- ✅ **A/B Testing** - compare different prompts or models objectively
-- ✅ **Quality Assurance** - track response quality metrics over time
-
----
-
-## ✨ Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Multi-Assertion Testing** | Example of latency, JSON validation, semantic similarity, safety checks |
-| **Intelligent Judging** | Uses Google Gemini 1.5 Flash as an example evaluator |
-| **Custom Provider** | Python script that mocks banking assistant responses |
-| **CSV Test Data** | 10 example test cases covering different scenarios |
-| **Configurable Thresholds** | Adjustable pass rate requirement (default 85%) |
-| **Detailed Reporting** | View test results and assertion-level details |
-
----
-
-## 🏗️ Architecture
-
-```
-test-LLM-AIpromptfoo/
-├── promptfooconfig.yaml    # Test configuration & assertions
-├── provider.py             # Custom Python provider (mocked banking assistant)
-├── test_cases.csv          # 10 test cases with expected outputs
-└── README.md               # This file
+### 1. Install dependencies
+```bash
+npm install
 ```
 
-### Component Details
+### 2. Run tests
+```bash
+./run_tests.sh
+```
 
-**promptfooconfig.yaml**
-- Example configuration showing assertion rules (latency, JSON, similarity, refusals)
-- Demonstrates using Google Gemini 1.5 Flash as the evaluator
-- Sets a sample 85% pass threshold for the test suite
+This executes the test suite configured in `configs/modelAssistedEvalSimilarity.yaml` against the banking assistant mock.
 
-**provider.py**
-- Simple Python mock of a banking assistant
-- Handles 4 scenario types: JSON requests, harmful requests, educational content, account help
-- Simulates realistic latency (100-400ms)
+### 3. View results
+Promptfoo generates a detailed report showing:
+- Pass/fail status for each test case
+- Assertion-level details (latency, JSON validation, similarity scores)
+- Overall metrics and pass rate
 
-**test_cases.csv**
-- 10 example test cases grouped into 3 types:
-  - **json_schema**: Example JSON response validation
-  - **similarity**: Example semantic correctness checks
-  - **refusal**: Example safety/refusal testing
+## 📁 Project Structure
+
+- **provider.py** - Mock banking assistant implementation
+- **configs/** - Test configurations with assertion rules
+- **testCases/** - CSV files with test scenarios
+- **run_tests.sh** - Test execution script
+
+## Key Features
+
+- **Custom Provider** - Python mock of banking assistant
+- **Multiple Assertions** - Latency, JSON validation, semantic similarity, safety
+- **LLM as Judge** - Google Gemini evaluates semantic correctness
+- **CSV Test Data** - Easy test case management
+- **Configurable Thresholds** - Adjust pass requirements (default 85%)
 
 ---
 
-## 🔧 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
-- **Python 3.8+** (for running the mock provider)
-- **Node.js 16+** (for Promptfoo CLI)
-- **Google API Key** (for Gemini 1.5 Flash - optional for this sample)
-- **Unix-like environment** (macOS, Linux, or WSL on Windows)
+- Python 3.8+
+- Node.js 16+
+- Google API Key (for Gemini evaluation - [get one here](https://console.cloud.google.com))
 
-### Step 1: Install Promptfoo
+### Installation
 
 ```bash
+# Install Promptfoo globally
 npm install -g promptfoo
-```
 
-Verify installation:
-```bash
-promptfoo --version
-```
-
-### Step 2: Set Up Google API Key
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a new project (or select existing)
-3. Enable the **Generative Language API**
-4. Create an API key under **Credentials**
-5. Set the environment variable:
-
-```bash
+# Set your Google API key
 export GOOGLE_API_KEY="your-api-key-here"
-```
 
-**For persistent setup**, add to your shell profile (`~/.zshrc` or `~/.bash_profile`):
-```bash
-echo 'export GOOGLE_API_KEY="your-api-key-here"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-### Step 3: Clone or Navigate to Project
-
-```bash
+# Navigate to project and install dependencies
 cd /path/to/test-LLM-AIpromptfoo
+npm install
 ```
 
-### Step 4: (Optional) Create Python Virtual Environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-No additional Python packages are needed for this sample project!
+No additional Python packages needed!
 
 ---
 
@@ -260,26 +185,6 @@ Suite Summary: 9/10 tests passed (90% > 85% threshold) → SUITE PASS ✅
 Edit `test_cases.csv` and add a new row:
 ```csv
 "Your example query here",similarity,"Expected output description"
-```
-
-### Change Assertion Thresholds
-
-Edit `promptfooconfig.yaml` to adjust example values:
-```yaml
-assert:
-  - type: latency
-    threshold: 1500  # Example: Change from 2000ms to 1500ms
-  - type: similar
-    threshold: 0.7   # Example: Change from 0.6 to 0.7
-```
-
-### Swap the Example Provider
-
-Replace the provider in `promptfooconfig.yaml`:
-```yaml
-provider: openai:gpt-4          # Try different models
-# or
-provider: anthropic:claude-3    # Example alternatives
 ```
 
 ### Adapt to Your Own Use Case
