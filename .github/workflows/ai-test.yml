@@ -14,22 +14,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       # 2. SETUP PYTHON (Required for custom provider)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version-file: ".python-version"
 
       # 3. INSTALL PROMPTFOO
       - name: Install Promptfoo
         run: npm install -g promptfoo
 
-      # 4. RUN EVALUATION
+      # 4. RUN EVALUATION (Generate JSON and HTML in one go)
       - name: Run Promptfoo Evaluation
-        run: promptfoo eval --config configs/deterministicEvalJson.yaml --verbose --output results.json
+        run: |
+          promptfoo eval \
+            --config configs/deterministicEvalJson.yaml \
+            --verbose \
+            --output results.json \
+            --output report.html
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         timeout-minutes: 30
@@ -40,12 +45,7 @@ jobs:
           echo "Test evaluation completed. View detailed results:"
           cat results.json | jq '.'
 
-      # 6. GENERATE HTML REPORT (Optional)
-      - name: Generate HTML Report
-        if: always()
-        run: promptfoo view --output report.html results.json || echo "Report generation skipped"
-
-      # 7. UPLOAD ARTIFACTS
+      # 6. UPLOAD ARTIFACTS
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
@@ -56,11 +56,21 @@ jobs:
             report.html
           retention-days: 30
 
-      # 8. FAIL IF TESTS DON'T MEET THRESHOLD
+      # 7. FAIL IF TESTS DON'T MEET THRESHOLD
       - name: Validate Test Threshold
         run: |
-          PASS_RATE=$(jq '.stats.pass / (.stats.pass + .stats.fail)' results.json)
+          # Updated jq path to match Promptfoo v0.120+ structure
+          PASS_RATE=$(jq '.results.stats.successes / (.results.stats.successes + .results.stats.failures)' results.json)
+
+          # Handle case where data might be missing/null
+          if [ "$PASS_RATE" == "null" ] || [ -z "$PASS_RATE" ]; then
+            PASS_RATE=0
+          fi
+
           MIN_SCORE=0.85
+
+          echo "Calculated Pass Rate: $PASS_RATE"
+
           if (( $(echo "$PASS_RATE < $MIN_SCORE" | bc -l) )); then
             echo "❌ Test suite failed: Pass rate $PASS_RATE is below threshold $MIN_SCORE"
             exit 1
