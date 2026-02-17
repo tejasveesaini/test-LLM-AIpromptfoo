@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   evaluate-ai:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,14 +14,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       # 2. SETUP PYTHON (Required for custom provider)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       # 3. INSTALL PROMPTFOO
       - name: Install Promptfoo
@@ -29,7 +29,7 @@ jobs:
 
       # 4. RUN EVALUATION
       - name: Run Promptfoo Evaluation
-        run: promptfoo eval --config promptfooconfig.yaml --verbose --output results.json
+        run: promptfoo eval --config configs/deterministicEvalJson.yaml --verbose --output results.json
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         timeout-minutes: 30
@@ -43,7 +43,7 @@ jobs:
       # 6. GENERATE HTML REPORT (Optional)
       - name: Generate HTML Report
         if: always()
-        run: promptfoo view --output report.html || echo "Report generation skipped"
+        run: promptfoo view --output report.html results.json || echo "Report generation skipped"
 
       # 7. UPLOAD ARTIFACTS
       - name: Upload Test Results
