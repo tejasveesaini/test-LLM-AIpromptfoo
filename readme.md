@@ -34,10 +34,19 @@ Promptfoo generates a detailed report showing:
 
 ## 📁 Project Structure
 
-- **provider.py** - Mock banking assistant implementation
-- **configs/** - Test configurations with assertion rules
-- **testCases/** - CSV files with test scenarios
-- **run_tests.sh** - Test execution script
+```
+test-LLM-AIpromptfoo/
+├── provider.py                    # Mock banking assistant
+├── run_tests.sh                   # Test execution script
+├── configs/                       # Test configurations
+│   ├── deterministicEvalJson.yaml
+│   ├── deterministicEvalRefusal.yaml
+│   └── modelAssistedEvalSimilarity.yaml
+└── testCases/                     # Test data
+    ├── deterministicEval.csv
+    ├── testCases_refusal.csv
+    └── testCases_LLMsimilarity.csv
+```
 
 ## Key Features
 
